@@ -3,26 +3,14 @@
 Ensure Ollama is installed correctly and running as a systemctl service.
 
 ## Check Ollama systemctl service:
-
 ```
 sudo systemctl status ollama.service
 ```
-
-```
-```
-
 ## Pull Open WebUI Docker Image:
-
 ```
 docker pull ghcr.io/open-webui/open-webui:main
 ```
-
-```
-```
-
 ## To run Open WebUI:
-```
-
 ```
 sudo docker run -d \
   -p 3000:8080 \
@@ -33,4 +21,3 @@ sudo docker run -d \
   --restart always \
   ghcr.io/open-webui/open-webui:main
 ```
-
