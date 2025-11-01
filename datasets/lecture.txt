@@ -1,0 +1,418 @@
+
+
+--- Page 1 ---
+
+DIT 345 Fundamentals of
+Software Architecture
+Lecture 3: Utility Trees and
+Architectural Styles
+Rebekka Wohlrab
+11
+
+--- Page 2 ---
+
+Assignment 1 Tips: Architectural Impact
+⬥ Task: “For each constraint, write a short one-sentence description of
+the impact it will have on the architecture of the
+system.”
+⬦ Be careful that you really describe the architectural impact. Don’t write: “We need a large market
+share because it is important that the company makes profit.”
+⬦ Ok: ”Our application needs to interact with a COBOL system that is developed in-house, which
+impacts the architectural design of our interfaces and modifiability of the architecture.”
+⬥ Make sure to include a metric for the quality requirements
+2
+
+--- Page 3 ---
+
+Architecturally significant requirements
+⬥ We only want to capture the most important quality attribute requirements.
+⬥ We call a subset of our QARs architecturally significant if they have:
+⬦ A profound impact on the architecture.
+Which means that including this requirement will very likely result in a different architecture than
+if it were not included.
+and
+⬦ A high business or mission value.
+Which means that if the architecture is going to satisfy this requirement—potentially at the
+expense of not satisfying others—it must be of high value to important stakeholders.
+⬥ Need to create a “catalog” of requirements – in the form of a utility tree!
+3
+
+--- Page 4 ---
+
+Organizing QAs: Utility Trees
+(H,M) --- business value, architectural impact
+Data High, Medium, Low
+Latency Reduce storage latency on
+customer DB to < 200 ms.
+Performance
+Transaction
+Deliver video in real time.
+Note, in the utility tree,
+Throughput
+these can be abbreviated
+Quality Attribute
+New products Add CORBA middleware
+Scenarios. State at least
+in < 20 person-months.
+the response measure
+Modifiability Change
+Change web user interface and the stimulus.
+COTS
+in < 4 person-weeks.
+Utility
+Power outage at site1 requires traffic
+H/W failure redirected to site2 in < 3 seconds.
+Availability
+Network failure detected and recovered
+in < 1.5 minutes.
+COTS S/W
+Architecturally
+failures
+Significant
+Utility is “the goodness” of
+Credit card transactions are secure Requirements (as
+the system.
+D co a n ta fidentiality 99.999% of the time. Quality Attribute
+Security
+Scenarios)
+Customer DB authorization works
+Data
+Quality integrity 99.999% of the time.
+Attributes Quality Attribute 4
+Refinement
+
+--- Page 5 ---
+
+High, Medium, Low ranking (p. 306)
+⬥ High designates a must-have requirement, Medium is for a
+requirement that is important but would not lead to project failure were it
+omitted. Low describes a nice requirement to have but not something
+worth much effort.
+⬥ For architectural impact, High means that meeting this ASR will
+profoundly affect the architecture. Medium means that meeting this
+ASR will somewhat affect the architecture. Low means that meeting
+this candidate ASR will have little effect on the architecture.
+5
+
+--- Page 6 ---
+
+Evaluating Business Value
+⬥ Need to elicit stakeholders’ preferences for quality attributes
+⬥ Need to understand business impact of requirements
+⬥ Ask questions:
+⬦ "What could potentially occur if this requirement isn’t fulfilled?”
+⬦ "In what ways does the execution of this requirement contribute value to the project?”
+⬥ High, Medium, Low: Rank Business Value and Architectural Impact
+6
+
+--- Page 7 ---
+
+Organizing QAs: Utility Trees
+7
+High, Medium, Low: Rank Business Value and Architectural Impact
+
+--- Page 8 ---
+
+What is the point of Quality Attribute Scenarios?
+⬥ Want to be able to test quality attribute requirements – need precise and contextual
+information
+⬥ Example of an imprecise requirement: “A user request should be answered within 2s.”
+⬥ Somewhat measurable - but in what context should this requirement hold?
+⬥ Some QAs are relevant at run time, others are relevant for the development of the system
+Stimulus:
+Attack, event, request for a modification, ...
+Source:
+Artifact: often the system or a part of a system
+Actor, part of the
+system, processor, Response measure:
+system Latency, throughput, number
+of hours, ...
+8
+
+--- Page 9 ---
+
+Now we discuss how you can actually improve QAs
+Requirements
+(Quality Attribute Scenarios, architecturally significant requirements)
+Software Architecture
+Code 9
+
+--- Page 10 ---
+
+Architectural Styles
+⬥ Recurring forms have been widely observed in different systems.
+⬥ These forms are worth capturing because they have known properties and can be re-
+used.
+⬥ We call these forms styles:
+An architectural style is a set of element and relation types, together with a set of
+constraints on how they can be used.
+10
+
+--- Page 11 ---
+
+Architectural Styles
+1. Layered style
+2. Pipe-and-filter style
+3. Service-oriented style
+4. Publish-subscribe style
+5. Peer-to-peer style
+6. Microservice style
+11
+
+--- Page 12 ---
+
+Architecture quanta
+⬥ Quantum: An independently deployable artifact with high
+functional cohesion
+⬥ An architecture quantum includes all the necessary
+components to function independently from other parts of
+the architecture.
+vs
+⬦ If an application uses a database, it is part of the
+quantum because the system won’t function without it.
+⬥ Most legacy systems deployed using a single database by
+definition have a quantum of one.
+⬥ However, in the distributed microservices architecture style,
+each service includes its own database creating multiple
+12
+quanta (Q = #MS) within that architecture.
+
+--- Page 13 ---
+
+1- Layered Architecture style
+Topology Flavours
+13
+
+--- Page 14 ---
+
+1- Layered Architecture style
+Topology
+⬥ Want: Separation of concerns, so that we have easier portability, modifiability, and reuse.
+⬥ This style of architecture is the de facto standard for most applications, primarily because of its
+simplicity, familiarity, and low cost.
+⬥ In most organizations there are user interface (UI) developers, backend developers, rules developers,
+and database experts (DBAs). These organizational layers fit nicely into the tiers of a traditional
+layered architecture.
+15
+
+--- Page 15 ---
+
+1- Layered Architecture Style a five-star rating means the architecture characteristic is one of
+the strongest features in the architecture style.
+Layered Style Rating
+The layered architecture style is a good choice for:
+⬥ Small, simple applications or websites.
+⬥ As a starting point, with very tight budget and time
+constraints. The layered architecture is perhaps one of
+the lowest-cost architecture styles, promoting ease of
+development for smaller applications.
+⬥ The layered architecture style is also a good choice
+when an architect is still analyzing business needs and
+requirements.
+16
+
+--- Page 16 ---
+
+2- Pipeline Architecture style
+⬥ Need to process streams of discrete data items, from
+input to output. Many types of transformations occur
+repeatedly in practice, and so it is desirable to create
+these as independent, reusable parts.
+17
+
+--- Page 17 ---
+
+2- Pipeline Architecture style
+Pipes
+It is the communication channel between filters. Each pipe is typically
+unidirectional and point-to-point (no broadcast) for performance reasons,
+accepting input from one source and always directing output to another.
+Architects favor smaller data pipes payload to enable high performance.
+Filters
+Filters are self-contained, independent from other filters, and generally
+stateless. Filters should perform one task only. Composite tasks should be
+handled by a sequence of filters rather than a single one.
+18
+
+--- Page 18 ---
+
+Transformer architecture
+Shazeer, Noam; Parmar, Niki; Uszkoreit, Jakob; Jones,
+Llion; Kaiser, Łukasz; Polosukhin, Illia (2017). Advances
+in Neural Information Processing Systems. 30. Curran
+19
+Associates, Inc.
+
+--- Page 19 ---
+
+Pipeline Architecture Style
+Pipeline Style Rating
+⬥ Because the pipeline architecture is usually
+implemented as a monolithic deployment, the
+architectural quantum is always one.
+⬥ Overall cost and simplicity combined with modularity are
+the primary strengths of the pipeline architecture style.
+⬥ Being monolithic in nature, pipeline architectures don’t
+have the complexities associated with distributed
+architecture styles, are simple and easy to understand,
+and are relatively low cost to build and maintain.
+20
+
+--- Page 20 ---
+
+3- Service-Oriented Architecture style
+Topology of Service-Oriented style
+⬥ Idea: support interoperability of distributed
+components running on different platforms and
+written in different implementation languages,
+provided by different organizations, and distributed
+across the Internet
+⬥ Solution: The service-oriented architecture (SOA)
+style describes a collection of distributed
+components that provide and/or consume services.
+Because the services typically share a
+single monolithic database, the number of
+services within an application generally
+range between 4 and 12 services, with the
+average being about 7 services. 22
+
+--- Page 21 ---
+
+3- Service-Oriented Architecture style
+Topology of Service-Oriented style
+⬥ Services are accessed remotely from a
+user interface using a remote access
+protocol.
+⬥ Typical connectors: REST.
+⬥ Many topology variants exist within the
+service-oriented architecture style, making
+this perhaps one of the most flexible
+architecture styles.
+23
+
+--- Page 22 ---
+
+Service-Based Architecture style
+Service-Based style Rating
+⬥ Service-based architecture is a domain-partitioned
+architecture, meaning that the structure is driven by the
+domain rather than a technical consideration (such as
+presentation logic or persistence logic).
+⬥ Being a distributed architecture, the number of quanta
+can be >= 1.
+⬥ Breaking apart an application into separately deployed
+domain services allows for fast change (agility), better
+test coverage due to the limited scope of the domain
+(testability), and more frequent deployments.
+⬥ Fault tolerance and overall application availability also
+rated high 25
+
+--- Page 23 ---
+
+4- Publish-Subscribe Architecture Style
+Topology
+⬥ The pub-sub style is an extensible real-time distributed style, the components interact via announced messages,
+or events, and components may subscribe to a set of events.
+⬥ It is the job of the publish-subscribe runtime infrastructure to make
+sure that each published event is delivered to subscribers of that event.
+⬥ Publisher components place events on the event bus by announcing
+them; the connector then delivers those events to the subscriber
+components that have registered an interest in the events.
+⬥ Subscribers let the publisher know they're interested, the publisher
+stores their addresses to know where to send which message.
+26
+
+--- Page 24 ---
+
+Publish-Subscribe Architecture Style
+Topology
+⬥ Components interact via announced messages, or events.
+⬦ Components may subscribe to a set of events.
+⬦ It is the job of the publish-subscribe runtime broker to make sure that each published
+event is delivered to all subscribers of that event (topic).
+⬥ Advantages: loose coupling, scalability, modifiability,
+improved security (messages sent to subscribers only)
+⬥ Limitations: need to guarantee delivery, performance
+problems when overloaded with messages
+28
+
+--- Page 25 ---
+
+5- Peer-to-Peer Style
+⬥ Peers request services from and provide services to one another across a network.
+⬦ Peer: an independent component running on a network node.
+⬦ Request/reply connector, which is used to connect to the peer network, search for other peers,
+and invoke services from other peers.
+⬥ Weaknesses: Managing security, data consistency, data/service availability, backup, and
+recovery are all more complex.
+⬥ Small peer-to-peer systems may not be able to consistently achieve quality goals such
+as performance and availability.
+29
+
+--- Page 26 ---
+
+6- Microservices Style
+Topology
+⬥ Decoupling the services: Benefits of
+extreme decoupling, both at the domain
+and operational process level.
+30
+
+--- Page 27 ---
+
+Microservices Style
+Other Features
+Data Isolation. Another requirement of microservices, driven
+by the bounded context concept, is data isolation. Many
+other architecture styles use a single database for
+persistence. However, microservices tries to avoid using all
+kinds of coupling, shared schemas and databases as
+integration points.
+CI/CD of DevOps The evolutionary path from monolithic
+applications to a microservices architecture style was
+prompted primarily through the process of continuous
+integration and delivery.
+31
+
+--- Page 28 ---
+
+Microservices Style
+Interface
+The User Interface is critical to the performance of Microservice design.
+There are 2 different designs to deal with the APIs. This is suitable for remote web application environment.
+REST
+(REpresentation
+al State
+Transfer)
+Traditional web-based or fat-client business
+lightweight centralized message brokerto
+application
+access remote service components
+Message brokers can validate, store, route, and deliver messages to the appropriate
+destinations. They serve as intermediaries between services. This facilitates decoupling
+of processes/services. 32
+
+--- Page 29 ---
+
+Microservices Style
+Microservices Style Rating
+⬥ Microservices is decidedly a domain-centered architecture,
+where each service boundary should correspond to a domain.
+⬥ Fault tolerance and reliability are impacted when too much
+interservice communication is used. Independent, single-
+purpose services generally lead to high fault tolerance.
+⬥ High scalability, elasticity, and evolutionary systems utilized
+this style to great success.
+⬥ It also has the most distinct quanta of any modern
+architecture.
+33
+
+--- Page 30 ---
+
+You can mix architectural styles
+The microservice architectural style can be seen as a
+combination of client-server and publish/subscribe
+styles.
+Repository
+Client Server Publish/Subscribe
+34

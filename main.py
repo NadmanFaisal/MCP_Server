@@ -1,17 +1,24 @@
-import ollama
+import re
+import pdfplumber
+
+from data_cleaning.data_extractor import *
 from embedding.vector_embedding import *
 
-FILE = 'datasets/cat-facts.txt'
+PDF_PATH = 'datasets/L03 - Utility Trees and Styles.pdf'
+FILE_PATH = 'datasets/lecture.txt'
 
-# Loading the dataset
-dataset = []
-with open(FILE, 'r') as file:
-  dataset = file.readlines()
-  print(f'Loaded {len(dataset)} entries')
+text = extract_text(PDF_PATH)
+save_to_text = save_to_text_file(FILE_PATH, text)
+
+dataset = preprocess_and_chunk(FILE_PATH)
+
+print(dataset)
+print(f'Loaded {len(dataset)} coherent chunks')
 
 query = input("What can I help you with?")
 
 similarities = get_similarity(query, dataset)
 print(similarities)
-result = retrieve_best_document(query, dataset, similarities)
-print(result[0]['best_document'])
+
+results = retrieve_best_document(query, dataset, similarities)
+print(results)
