@@ -5,10 +5,13 @@ def preprocess_and_chunk(file_path):
     with open(file_path, 'r') as f:
         full_text = f.read()
 
-    text = re.sub(r'\s*\n\s*\n\s*', '\n\n', full_text)
-    text = re.sub(r'\n{3,}', '\n\n', text)
+    text = re.sub(r'\s*\n\s*\n\s*', '---PARAGRAPH-BREAK---', full_text)
+    
     cleaned_lines = [line.strip() for line in text.split('\n')]
-    text = '\n'.join(cleaned_lines)
+    text = ' '.join(cleaned_lines)
+    
+    text = text.replace('---PARAGRAPH-BREAK---', '\n\n')
+
     chunks = [chunk.strip() for chunk in text.split('\n\n') if chunk.strip()]
 
     return chunks

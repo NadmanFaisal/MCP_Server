@@ -15,7 +15,7 @@ dataset = preprocess_and_chunk(FILE_PATH)
 print(dataset)
 print(f'Loaded {len(dataset)} coherent chunks')
 
-query = input("What can I help you with?")
+query = input("What can I help you with?\n")
 
 similarities = get_similarity(query, dataset)
 print(similarities)
