@@ -13,6 +13,14 @@ def get_similarity(queries, documents):
     similarity = model.similarity(query_embeddings, document_embeddings)
     return similarity
 
+def embed_query(queries):
+    query_embeddings = model.encome(queries, prompt_name="query")
+    return query_embeddings
+
+def embed_document(documents):
+    document_embeddings = model.encode(documents)
+    return document_embeddings
+
 def retrieve_best_document(queries, documents, similarities):
     similarity_matrix = similarities 
     retrieved_results = []
