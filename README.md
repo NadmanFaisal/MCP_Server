@@ -27,5 +27,5 @@ sudo docker run -d \
 Open the root of the MCP server and activate thhe virtual environment, then ruon the following command:
 
 ```
-uvx mcpo --port 8000 -- your_mcp_server_command
+uvx mcpo --port 8000 -- /home/nadman/Desktop/Personal_Projects/MCP_Server/.venv/bin/python server.py
 ```

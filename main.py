@@ -2,7 +2,6 @@ import re
 import pdfplumber
 
 from data_cleaning.data_extractor import *
-from embedding.vector_embedding import *
 from database.database import *
 
 PDF_PATH = 'datasets/L03 - Utility Trees and Styles.pdf'
