@@ -6,8 +6,6 @@ from database.database import *
 # Initialize FastMCP server
 mcp = FastMCP("RAG_MCP")
 
-USER_AGENT = "weather-app/1.0"
-
 @mcp.tool()
 def add_numbers(n1: int, n2: int) -> int:
     """

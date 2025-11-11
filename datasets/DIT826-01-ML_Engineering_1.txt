@@ -1,0 +1,319 @@
+
+
+--- Page 1 ---
+
+Engineering of ML Systems
+Part 1
+DIT826
+Daniel Strüber
+
+--- Page 2 ---
+
+Learning objectives
+• Understand that building ML systems is more
+than training a model
+• Understand practices and challenges of ML
+systems engineering
+2
+
+--- Page 3 ---
+
+Book
+Building Intelligent Systems:
+A guide to Machine Learning
+Engineering, Geoff Hulten
+Available as an e-Book at GU and Chalmers libraries
+3
+
+--- Page 4 ---
+
+Mandatory reading
+• D. Sculley et al., Hidden Technical Debt in Machine Learning
+Systems, https://papers.nips.cc/paper/5656-hidden-
+technical-debt-in-machine-learning-systems.pdf
+• S. Amershi et al., Software Engineering for Machine
+Learning: A Case Study, https://www.microsoft.com/en-
+us/research/uploads/prod/2019/03/amershi-icse-
+2019_Software_Engineering_for_Machine_Learning.pdf
+• M. Zinkevich, Rules of Machine Learning: Best Practices for
+ML Engineering,
+http://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf
+4
+
+--- Page 5 ---
+
+Machine Learning
+• Is a branch of artificial intelligence based on the idea that systems
+can learn from data, identify patterns, and make decisions with
+minimal human intervention.
+• “A computer program is said to learn from experience E with
+respect to some class of tasks T and performance measure P, if its
+performance at tasks in T, as measured by P, improves with
+experience E”
+Tom Mitchell
+• Example
+– Task T, What is the task?
+– Experience E, What is the Experience?
+– Performance P, What is the Performance?
+• If P increases with E the machine is learning!
+5
+
+--- Page 6 ---
+
+Programming vs. ML
+Traditional Programming
+Program
+Computer Output
+Data
+Machine Learning
+Output
+Computer Program
+Data
+6
+
+--- Page 7 ---
+
+Software Engineering
+• A systematic approach for software
+development.
+• An iterative process that includes different
+activities, such as:
+– planning, risk analysis, requirement engineering,
+software design, coding, versioning, testing,
+integration, deployment, maintenance, etc.
+7
+
+--- Page 8 ---
+
+Software Engineering For ML
+• A systematic way to create and integrate ML
+into software products and services.
+8
+
+--- Page 9 ---
+
+Workflow is needed
+• Not a linear process
+S. Amershi et al., Software Engineering for Machine Learning: A Case Study, ICSE-SEIP, 2019
+9
+
+--- Page 10 ---
+
+The ML Workflow
+• Model Requirements:
+– Problem and Goals?
+– Models?
+10
+
+--- Page 11 ---
+
+Problems and when to use ML
+• Syndrome: “We need ML because it’s trendy”*
+• How often you think you need to update your
+system?
+– If n is small, then using ML is probably not right.
+• Example:
+NewBalance = OldBalance – WithdrawalAmount
+*Rule #1: Don’t be afraid to launch a product without machine learning, in
+11
+“M. Zinkevich, Rules of Machine Learning”
+
+--- Page 12 ---
+
+Requirements: Problem
+• Big problems • Time changing problems
+• ~100 million songs • New technologies
+• ~130 million books • Human faces – masks, face tattoos?
+• ~1.5 billion websites • UX
+• Open ended problems • Intrinsically hard problems
+• ~6k tweets per second • Weather prediction
+• ~60k new web pages per day • Complex Open-ended games
+• ~3 billion active Facebook users • First chess program 1957
+• Deep Blue 1997 beat Kasparov
+• AlphaGo
+12
+
+--- Page 13 ---
+
+Success of ML and AI Source: Geoff Hulten, Building Intelligent Systems
+Marketing & Abuse / Security
+Web Search Finance
+E-commerce
+Robotics Digital Assistants Games Many Othe1r3s
+
+--- Page 14 ---
+
+A Problem-Solving Technique:
+Design Thinking
+Framing and Ideating and
+Analyzing Evaluating
+Iterative
+Problem Space Solution Space
+Alignment
+Exploration Exploration
+ Lindberg et al. Design thinking: A fruitful concept for IT development? In Design thinking. Springer, 3–18, 2011
+14
+ Nigel Cross. Design thinking: Understanding how designers think and work. Berg, 2011
+
+--- Page 15 ---
+
+Defining the Goals
+• A successful goal should:
+1. Communicate the desired outcome: what?
+2. Be achievable: how?
+3. Be measurable: does it work?
+• Spam/Not Spam
+15
+
+--- Page 16 ---
+
+Model Type Source: Geoff Hulten, Building Intelligent Systems
+• What models are most appropriate for the given problem?
+(classification, clustering, etc. )
+Decision Tree
+Number of Year HasWord(
+Book Title Genre Author ID Best Seller F(X) def F(BookTitle, NumberOfPages, YearPublished, Genre, HasWord(Robot), AuthorID):
+Pages Published Robot)
+Gone With The Historical if YearPublished> 1990:
+1037 1936 0 1001 1 0
+Wind Romance if Genre == “Science Fiction”:
+return 1
+For Whom the War
+Bell Tolls 480 1940 Drama 0 1010 1 1 else:
+return 0
+Science
+I, Robot 253 1980 1 1020 1 0 elifAuthorID== 1010:
+Fiction
+return 1
+One Hundred Science
+100 2018 0 1030 0 1 else:
+Goodbyes Fiction
+return 0
+Linear Models F(X) Linear Model
+Decision trees
+1 def F(BookTitle, NumberOfPages, YearPublished, Genre, HasWord(Robot), AuthorID):
+Ensembles of models
+Neural networks sum = 0.5 * NumberOfPages+ 0.75 * YearPublished+ 0.1 * AuthorID
+0
+Support vector machines
+return 1 if sum > 2000 else 0
+0
+Etc.
+0
+16
+
+--- Page 17 ---
+
+Questions?
+17
+
+--- Page 18 ---
+
+The ML Workflow
+• Working with data:
+– Collection
+– Cleaning
+– Labeling
+18
+
+--- Page 19 ---
+
+Data pipeline
+Definition
+• Process that takes input data through a series
+of transformation stages, producing data as
+output.
+• Both the input and output data can be fetched
+and stored in different locations, such as a
+database, a stream, a file, etc.
+19
+
+--- Page 20 ---
+
+Data collection
+• Prepare the scripts to fetch the raw data
+• Store the data
+– CSV
+– DB
+– Cloud
+
+--- Page 21 ---
+
+Data collection
+• Sources
+– Existing data sources in the company
+– Existing open source data
+– Collect new data
+21
+
+--- Page 22 ---
+
+Data cleaning
+• The data are often unstructured and can be
+quiet difficult to work with.
+• Dealing with noise e.g., inaccurate and
+incomplete data.
+22
+
+--- Page 23 ---
+
+Data labeling
+• Ground truth
+• Sometimes readily available
+(sale price of house collected from a website)
+23
+
+--- Page 24 ---
+
+Pitfalls of working with data
+Broken confidence intervals
+• 95% chance of being within an interval means that
+there is a 5% chance of being outside the interval.
+• Example: Self-driving cars
+– 100 times  5 mistakes
+• TIP: Ask yourself few questions:
+• Is this right?
+• How sure are we?
+• Is there another interpretation?
+• How can we know which is correct?
+24
+
+--- Page 25 ---
+
+Pitfalls of working with data
+Noisy data
+• Every large data set will have noise.
+• Noisy data will inject errors into things created
+from these data.
+• Mitigation:
+– Need for validation (There is lecture on this soon!)
+25
+
+--- Page 26 ---
+
+Pitfalls of working with data
+Biased data
+• Bias happens when data is collected in ways
+that are systematically different from the way
+the data is used.
+• Bias can make data less useful.
+• Mitigation:
+– Get more relevant telemetry or training data that
+contain context.
+26
+
+--- Page 27 ---
+
+Pitfalls of working with data
+Out-of-date data
+• Things do change and collected data might not
+be representative anymore.
+• Example: face recognition
+• Mitigation
+– Train and deploy new models.
+27
+
+--- Page 28 ---
+
+Questions?
+28

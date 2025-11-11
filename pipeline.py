@@ -1,9 +1,15 @@
 import os
 import asyncio
 import glob
+import environ
 
 from data_cleaning.data_extractor import *
 from database.database import *
+
+env = environ.Env()
+env.read_env()
+CHROMA_DB_HOST = env('CHROMA_DB_HOST')
+PORT = env('PORT')
 
 PDF_DIR = 'datasets'
 
@@ -31,17 +37,17 @@ async def run_ingestion_pipeline():
             with open(text_destination, 'w', encoding='utf-8') as outfile:
                 outfile.write(raw_text)
             print(f"   -> Raw text saved to {text_destination}")
-            await save_to_db(text_destination)
+            await save_to_db(text_destination, CHROMA_DB_HOST, PORT)
 
     print("\n--- Ingestion Pipeline Complete. Ready to Query. ---")
 
 async def run_query_loop():
     query = input("What can I help you with?\n")
-    documents = await get_documents(query)
+    documents = await get_documents(query, CHROMA_DB_HOST, PORT)
     print(documents)
 
 async def main():
-    await delete_collection("my_collection")
+    await delete_collection("my_collection", CHROMA_DB_HOST, PORT)
     await run_ingestion_pipeline()
 
 

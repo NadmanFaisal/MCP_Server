@@ -5,13 +5,13 @@ import uuid
 from data_cleaning.data_extractor import *
 from embedding.vector_embedding import *
 
-async def delete_collection(collection_name):
-    client = await chromadb.AsyncHttpClient(host='192.168.68.104', port=8000)
+async def delete_collection(collection_name, host, port):
+    client = await chromadb.AsyncHttpClient(host=host, port=port)
     await client.delete_collection(name=collection_name)
 
 
-async def save_to_db(file_path):
-    client = await chromadb.AsyncHttpClient(host='192.168.68.104', port=8000)
+async def save_to_db(file_path, host, port):
+    client = await chromadb.AsyncHttpClient(host=host, port=port)
     dataset = preprocess_and_chunk(file_path)
     document_embeddings = embed_document(dataset)
     document_ids = []
@@ -34,8 +34,8 @@ async def save_to_db(file_path):
     )
     return True
 
-async def get_documents(query):
-    client = await chromadb.AsyncHttpClient(host='192.168.68.104', port=8000)
+async def get_documents(query, host, port):
+    client = await chromadb.AsyncHttpClient(host=host, port=port)
     query_embedding = embed_query(query)
 
     collection = await client.get_or_create_collection(name="my_collection")

@@ -1,0 +1,692 @@
+
+
+--- Page 1 ---
+
+Engineering of ML Systems
+Part 2
+DIT826
+Daniel Strüber
+
+--- Page 2 ---
+
+Learning objectives
+• Understand that building ML systems is more
+than training a model
+• Understand practices and challenges of ML
+systems engineering
+2
+
+--- Page 3 ---
+
+The ML Workflow
+• Working with data:
+– More issues
+– Mitigations
+3
+
+--- Page 4 ---
+
+4
+
+--- Page 5 ---
+
+SW engineering issues data
+Unstable dependencies
+⇢
+• SW design principle: “minimize dependency to
+unstable modules”
+• Unstable data dependencies
+– Quality or quantity of data source deteriorates
+– Format or schema of data sources changes
+• Especially problematic when models are
+retrained frequently
+5
+
+--- Page 6 ---
+
+SW engineering issues data
+Unstable dependencies
+⇢
+• Mitigation: Create versioned copy
+(i.e., decoupling)
+• Mitigation: Monitor for upstream instability in
+features
+– What alert would fire if one datacenter stops sending
+data?
+– What if an upstream signal provider did a major
+version upgrade?
+6
+
+--- Page 7 ---
+
+CSV validator
+Validation of CSV file
+• https://pypi.org/project/csvvalidator
+# import everything from the csvvalidator package
+from csvvalidator import *
+# Specify which fields (columns) your .csv needs to have
+# You should include all fields you use in your dashboard
+field_names = ('date’,
+'units_sold’,
+'store’
+)
+# create a validator object using these fields
+validator = CSVValidator(field_names)
+7
+
+--- Page 8 ---
+
+CSV validator
+# write some checks to make sure specific fields
+# are the way we expect them to be
+validator.add_value_check(
+'date', # check for a date with the sepecified format
+datetime_string('%Y-%m-%d'),
+'EX1', # code for exception
+'invalid date' # message to report if error thrown
+)
+validator.add_value_check(
+'units_sold',
+int,
+'EX2',
+'number of units sold not an integer'
+)
+validator.add_value_check(
+'store',
+enumeration('store1', 'store2'),
+'EX4',
+'store name not recognized’
+)
+problems = validator.validate(data) 8
+
+--- Page 9 ---
+
+SW engineering issues data
+Unnecessary dependencies
+⇢
+• SW design principle: “keep it simple”
+• Unnecessary data dependencies
+– Correlated features
+– -features (small improvement)
+– Forgotten features (from previous experiment)*
+𝜖𝜖
+*Rule #22 – Clean up features you are no longer using, in “M. Zinkevich, Rules of
+Machine Learning”
+
+--- Page 10 ---
+
+SW engineering issues data
+Unnecessary dependencies
+⇢
+• Issue of cost
+– Storage cost
+(esp. if data is massively large)
+(esp. if data is versioned)
+– Computational cost
+– Maintenance cost
+– Monitoring cost
+
+--- Page 11 ---
+
+SW engineering issues data
+Unnecessary dependencies
+⇢
+• One Solution:
+– Feature selection via exhaustive ‘leave-one-
+feature-out’ evaluations.
+F F
+F F F F F F F
+F F F F F F
+Model Model Model
+F F F F F F
+F F F F F F F F F
+Acc 90%
+Acc 90% Acc 90%
+11
+
+--- Page 12 ---
+
+SW engineering issues data
+• SW design principle: “avoid module dependency
+loops” ⇢
+• Hidden feedback loops
+– Output of model A → fed to model B
+– Output of model B → fed back to model A
+• Mitigation
+– Reduce dependency
+– Better understand the problem that you want to solve
+– Testing
+12
+
+--- Page 13 ---
+
+Questions?
+13
+
+--- Page 14 ---
+
+The ML Workflow
+• Working with data:
+– Feature Engineering
+14
+
+--- Page 15 ---
+
+Feature Engineering
+• The art of converting context into features
+that work well for your problem and with your
+model structure.
+Problem
+Data + Context Features
+15
+
+--- Page 16 ---
+
+Feature Engineering
+• Normalization and standardization: changing
+numerical features so they are comparable
+Standardized = Mean
+𝒇𝒇− 𝜇𝜇
+Std. Deviation
+𝒇𝒇
+𝜎𝜎
+• Expose hidden Information
+• Expand the context
+16
+
+--- Page 17 ---
+
+Feature Engineering
+Feature Selection
+• Which features to use?
+– Use features that will help your model to generalize.
+• How many features to use?
+– Approaches:
+• Frequency
+• Accuracy
+• …
+17
+
+--- Page 18 ---
+
+Feature Selection
+Frequency
+• Pick top N most common features in the
+training set.
+Feature Count
+to 1745
+you 1526
+Feature with a
+I 1369
+count > 1000
+a 1337
+the 1007
+and 758
+in 400
+… …
+18
+
+--- Page 19 ---
+
+Feature Selection
+Accuracy
+• Pick N that improves the accuracy of the model.
+– Maximize the accuracy gain from using these features.
+• Greedy search, adding/removing features into/from
+the model:
+– Add (remove) a candidate feature into/from the model.
+– Build and train the model and evaluate it.
+– Check the accuracy.
+Remove Accuracy
+– Add (remove) the feature.
+<None> 88.2%
+– Repeat until you get n.
+to 92.5%
+FREE 85.8%
+… …
+
+--- Page 20 ---
+
+Questions?
+20
+
+--- Page 21 ---
+
+The ML Workflow
+• Working with data:
+– Model Training
+21
+
+--- Page 22 ---
+
+A Challenge…
+• Different expertise is necessary
+– Software development
+– Data management (large data)
+– Machine learning
+• Different teams might work in silos
+– Data engineers: building data pipeline
+– Data scientist: selecting and tuning the algorithm
+– Web developers: building the client/server
+22
+
+--- Page 23 ---
+
+…consequences
+• Models might only work in the lab
+– Never leave the proof-of-concept state
+• Hard to update and maintain.
+• Many are advocating for CD practices applied
+to production ML systems*
+* D. Sato, A. Wider, C. Windheuser, Continuous delivery for machine learning,
+https://martinfowler.com/articles/cd4ml.html
+23
+
+--- Page 24 ---
+
+Static vs. dynamic training
+Definition
+• Static training
+– Inference model trained once on a fixed data set
+– Put in production, does not change
+• Dynamic training
+– Labeled data continuously coming into the system
+– New data incorporated into the model
+24
+
+--- Page 25 ---
+
+Static vs. dynamic training
+When to use
+• Static training
+– Modeled reality is not expected to change
+(e.g., cat/dog pictures recognition, playing chess)
+• Dynamic training
+– Modeled reality has trends and changes
+(e.g., buying trends, recommendations, self-
+driving cars, etc.)
+25
+
+--- Page 26 ---
+
+Static vs. dynamic training
+Attention points
+• Static training
+– Model can degrade slowly.
+– More effort on data collection and labeling
+• Dynamic training
+– Need monitoring (going off the rail?)
+– Need infrastructure for versioning and roll-back
+– Less effort on data collection, but tricky to get it right.
+26
+
+--- Page 27 ---
+
+Reproducibility and auditability
+• Keeping track of history is important
+• To have reproducible results, need to know
+the exact version of
+1. Source code
+(e.g. model training and pre-processing)
+2. Training data
+(e.g. input signals and labels)
+3. Platform
+(e.g. OS, GPU, and version of installed packages)
+27
+
+--- Page 28 ---
+
+Traceability and versioning
+• Data sets should be tagged with metadata
+1. Origin
+2. Freshness (when collected)
+3. Code used to extract it
+28
+
+--- Page 29 ---
+
+Traceability and versioning
+• Models should be tagged with provenance
+– Which data used for training/testing?
+– Which pipeline generated it?
+• Versioned copies should be kept of each
+<code,data,model,environment> tuple
+• At least for models that make it to production
+29
+
+--- Page 30 ---
+
+Versioning challenges
+• Versioning very large artifacts (e.g., data) is
+difficult and costly.
+30
+
+--- Page 31 ---
+
+Questions?
+31
+
+--- Page 32 ---
+
+What is different with ML?
+Traditional
+A bit of this A lot of this
+software project
+ML
+A lot of this An this A bit of this
+software project
+32
+
+--- Page 33 ---
+
+Code is code, right?
+Design anti-patterns in ML systems
+• Pipeline jungles
+– no modularization of pipeline code, no refactoring
+• Mitigation
+– Modularize and organize the code.
+– Testing.
+
+--- Page 34 ---
+
+Code is code, right?
+Design anti-patterns in ML systems
+• Excessive glue code
+– Massive amount of code written to get data
+into/out of a general-purpose package
+• Mitigation
+– Create clean native solutions where feasible
+– Carefully consider the benefit and cost of adding
+(yet another) general-purpose package
+
+--- Page 35 ---
+
+Code is code, right?
+Design anti-patterns in ML systems
+• Dead experimental code paths
+– no clean up discipline
+• Mitigation
+– Periodical inspection of experimental code.
+
+--- Page 36 ---
+
+Example
+Blob of code. What does it do?
+df = pd.DataFrame(...)
+del df['column1’]
+df = df.dropna(subset=['column2', 'column3’])
+df = df.rename({'column2': 'unicorns', 'column3': 'dragons’})
+df['new_column'] = ['iterable', 'of', 'items’]
+df.reset_index(inplace=True, drop=True)
+36
+
+--- Page 37 ---
+
+Example
+Blob of code. Explained!
+# create a pandas DataFrame somehow
+df = pd.DataFrame(...)
+# delete a column from the dataframe
+del df['column1’]
+# drop rows that have empty values in column 2 and 3
+df = df.dropna(subset=['column2', 'column3’])
+# rename column2 and column3
+df = df.rename({'column2': 'unicorns', 'column3': 'dragons’})
+# add a new column
+df['new_column'] = ['iterable', 'of', 'items’]
+# reset index to account for the missing row we removed above
+df.reset_index(inplace=True, drop=True)
+Good comments explain rationale
+37
+
+--- Page 38 ---
+
+Questions?
+38
+
+--- Page 39 ---
+
+The ML Workflow
+• Working with data:
+– Evaluation is creation
+39
+
+--- Page 40 ---
+
+Evaluation
+Machine Learning
+Usually says
+Output Output
+𝑦𝑦 = 1
+Process 1 Model 1 Process 2 Model 2
+Data Data
+Usually says 0
+𝑦𝑦 =
+• Does Process 1 do a good job at mapping ‘data’ to ‘output’?
+• Is Model 2 better than Model 1?
+• Are the mistakes similar or different? Which is better?
+40
+
+--- Page 41 ---
+
+The ML Workflow
+• Where intelligence lives
+• Intelligent experience
+• Related to software architecture –
+solutions are instances of architectural styles
+41
+
+--- Page 42 ---
+
+Where Intelligence Lives
+• Static intelligence in the product
+• Client-side intelligence
+• Server-side intelligence
+• Back-end cached intelligence
+42
+
+--- Page 43 ---
+
+Where Intelligence Lives
+Static intelligence in the product
+• Model is packaged with the application
+• Pros
+– Cost of operation: Cheap
+– Latency in execution: Excellent
+– Offline operation: Yes
+• Cons
+– Latency in updating intelligence: Poor
+– No data to improve the intelligence
+43
+
+--- Page 44 ---
+
+Where Intelligence Lives
+Client-side intelligence
+• Executes completely on the client.
+• Pros
+– Latency in execution: Excellent
+– Offline operation: Yes
+• It depends
+– Latency in updating intelligence: Variable
+– Cost of operation: Based on update rate
+• Cons
+– Exposes intelligence to the world
+44
+
+--- Page 45 ---
+
+Where Intelligence Lives
+Server-centric intelligence
+• The intelligence runs in real-time in a service
+– Client sends features to a server; the server executes the
+intelligence on the features and returns the result.
+• Pros
+– Latency in updating intelligence: Good
+– Easier monitoring
+• It depends
+– Latency in execution: Variable
+– Cost of operation: Variable
+• Cons
+– Offline operation: No
+45
+
+--- Page 46 ---
+
+Where Intelligence Lives
+Back-end cached intelligence
+• Involves running the intelligence off-line, caching the
+results, and delivering these when needed.
+• Pros and Cons
+– Latency in execution: Variable
+– Latency in updating intelligence: Variable
+– Cost of operation: Variable
+– Offline operation: Partially
+46
+
+--- Page 47 ---
+
+Intelligence Experience
+• A connection between the intelligence and
+users.
+• Example: an intelligence determines that the
+user is in a room where it is a little dark for
+humans to see comfortably.
+– How should the experience respond?
+47
+
+--- Page 48 ---
+
+Intelligence Experience
+Techniques
+• P (LikeSong |User, History)
+• Modes of Intelligent Interaction
+Playing a Song… Should I Play a Song? Choose a Song… Choose a Song…
+Yes No
+Automate Prompt Organize Annotate
+• Which intelligence experience to use? When to
+Update it?
+48
+
+--- Page 49 ---
+
+Intelligence Experience
+Goals
+• Achieve objectives & increase profit and sales
+• Engage users and achieve their objectives
+• Get data to improve
+•
+Example:
+Home Light  P(on | sensors, motion, etc.)
+– Objective?
+P > 0.90; turn on light P < 0.25; turn light off
+P <= 0.50 P > 0.50
+(turn light off after time t)
+P > 0.75; then prompt user
+Full automation Save Energy User Safety 49
+
+--- Page 50 ---
+
+Questions?
+50
+
+--- Page 51 ---
+
+The ML Workflow
+• Model Monitoring
+51
+
+--- Page 52 ---
+
+Monitoring and Telemetry
+• Monitoring is foundational for producing
+intelligence that:
+– functions correctly, and
+– improves over time.
+• It includes knowing:
+– Context
+– Answers
+– Experiences
+– User behavior
+• Telemetry: collect data at remote points and
+transmit them to a central point for monitoring
+52
+
+--- Page 53 ---
+
+Monitoring inference output
+• Model output
+– Predicted value is within bounds
+– Warning sign of model going off the rail
+• Add sanity checks on output
+• Examples
+– Predicted house not 10x bigger in same area
+– Values are within specified distributions
+53
+
+--- Page 54 ---
+
+Monitoring: Rolling back
+• Model “roll back” procedure: Being able to
+quickly revert to a previous known-good model
+• Test how quickly and safely a model can be
+rolled back.
+
+--- Page 55 ---
+
+Intelligence Orchestration
+• Achieve objectives of the ML system
+• Controls the monitoring
+• Balance experience
+• Deals with mistakes
+55
+
+--- Page 56 ---
+
+Orchestrating intelligent systems
+Why needed?
+• Objective changes: • Intelligence changes:
+– Better understand a – More data, better
+problem models.
+– Solved previous objective – More accurate or less
+accurate model.
+• Cost changes:
+• User changes:
+– Telemetry costs
+– New users or users leave
+– Mistakes costs
+56
+
+--- Page 57 ---
+
+Questions?
+57
+
+--- Page 58 ---
+
+Summary: lifecycle of data-intensive AI systems
+Prepare data
+• Ingestion, Labeling, Normalization,
+Transformation, Validation
+Source: D. Sato, A. Wider, C. Windheuser, Continuous Delivery for Machine Learning
+https://martinfowler.com/articles/cd4ml.html 58
+
+--- Page 59 ---
+
+Lifecycle of data-intensive AI systems
+Experiment and build model
+• Select features, Select ML algorithm, Tune
+parameters, perform evaluation and testing
+Source: D. Sato, A. Wider, C. Windheuser, Continuous Delivery for Machine Learning 59
+
+--- Page 60 ---
+
+Lifecycle of data-intensive AI systems
+Serving the model in production
+• Deploy, Predict, Monitor, Update model
+Source: D. Sato, A. Wider, C. Windheuser, Continuous Delivery for Machine Learning 60
+
+--- Page 61 ---
+
+Questions?
+61
