@@ -47,7 +47,11 @@ async def run_query_loop():
     print(documents)
 
 async def main():
-    await delete_collection("my_collection", CHROMA_DB_HOST, PORT)
+    try:
+        await delete_collection("my_collection", CHROMA_DB_HOST, PORT)
+        print("Existing collection deleted.")
+    except Exception:
+        pass
     await run_ingestion_pipeline()
 
 

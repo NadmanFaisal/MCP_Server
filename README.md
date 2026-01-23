@@ -71,8 +71,8 @@ docker compose up -d
 2. Start the Virtual environment
 ```
 python3 -m venv .venv
-pip install -r requirements.txt
 source ./venv/bin/activate
+pip install -r requirements.txt
 ```
 3. In the root of the project, create a .env file and paste the following:
 ```
@@ -111,19 +111,5 @@ sudo docker run -d \
   --name open-webui \
   --restart always \
   ghcr.io/open-webui/open-webui:main
-```
-8. Run the Open WebUI Client
-
-This provides a UI for testing, connecting to your Ollama LLM and your running MCP server.
-```
-sudo docker run -d \
-  -p 3000:8080 \
-  --add-host=host.docker.internal:host-gateway \
-  -v open-webui:/app/backend/data \
-  -e OLLAMA_BASE_URL=[http://host.docker.internal:11434](http://host.docker.internal:11434) \
-  --name open-webui \
-  --restart always \
-  ghcr.io/open-webui/open-webui:main
-
 ```
 Access the client UI at http://localhost:3000.

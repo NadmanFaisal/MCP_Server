@@ -1,3 +1,4 @@
+import environ
 from typing import Any
 import httpx
 from mcp.server.fastmcp import FastMCP
@@ -5,6 +6,12 @@ from database.database import *
 
 # Initialize FastMCP server
 mcp = FastMCP("RAG_MCP")
+
+env = environ.Env()
+env.read_env() 
+
+CHROMA_DB_HOST = env('CHROMA_DB_HOST')
+PORT = env('PORT')
 
 @mcp.tool()
 def add_numbers(n1: int, n2: int) -> int:
@@ -30,7 +37,7 @@ async def get_documents_from_RAG(query: str) -> str:
         Returns:
             A concatenated string containing the retrieved documents and their sources.
     """
-    results = await get_documents(query)
+    results = await get_documents(query, CHROMA_DB_HOST, PORT)
     documents_list = results.get('documents', [[]])[0]
     formatted_string = "--- RAG Context ---\n" + "\n".join(documents_list)
     return formatted_string
